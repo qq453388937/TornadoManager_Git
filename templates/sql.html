@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ len(data)}}</title>
+</head>
+<body>
+
+<ul>
+
+    {% for item in data %}
+    <li>{{ item["btitle"] }}</li>
+    {% end %}
+</ul>
+</body>
+</html>

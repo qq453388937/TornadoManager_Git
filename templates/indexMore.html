@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>爱家-房源</title>
+    <link href="/static/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <link href="/static/css/reset.css" rel="stylesheet">
+    <link href="/static/css/main.css" rel="stylesheet">
+
+
+    <!--<link href="/static/css/index.css" rel="stylesheet">-->
+    <!--/static/css/index.css?v=fe8ccdaf962ce00b725138ef260cbf0c-->
+    <link href="{{static_url('css/index.css')}}" rel="stylesheet">
+
+</head>
+<body>
+<div class="container">
+    <div class="top-bar">
+        <div class="nav-bar">
+            <h3 class="page-title">房 源</h3>
+        </div>
+    </div>
+    <ul class="house-list">
+      {% if len(data) > 0 %}
+        {% for house in data %}
+        <li class="house-item">
+            <a href=""><img src="/static/images/home01.jpg"></a>
+            <div class="house-desc">
+                <div class="landlord-pic"><img src="/static/images/landlord01.jpg"></div>
+                <div class="house-price">￥<span>{{house["price"]}}</span>/晚</div>
+                <div class="house-intro">
+                    <span class="house-title">{{house["title"]}}</span>
+                    <em>整套出租 - {{house["score"]}}分/{{house["comments"]}}点评 - {{house["position"]}}</em>
+                </div>
+            </div>
+        </li>
+        {% end %}
+    {% else %}
+        对不起，暂时没有房源。
+    {% end %}
+    </ul>
+    <div class="footer">
+        <p><span><i class="fa fa-copyright"></i></span>爱家租房&nbsp;&nbsp;享受家的温馨</p>
+    </div>
+</div>
+
+<script src="/static/js/jquery.min.js"></script>
+<script src="/static/plugins/bootstrap/js/bootstrap.min.js"></script>
+<script src="/static/js/index.js"></script>
+</body>
+</html>

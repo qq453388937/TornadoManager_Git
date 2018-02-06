@@ -1,0 +1,2 @@
+port = 9999
+itcast = ["python", "c++", "java", "c", "mongodb", "redis", "nginx"]

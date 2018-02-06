@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>测试XSRF</title>
+    <script src="/static/js/jquery.min.js"></script>
+</head>
+<body>
+<a href="javascript:void(0);" onclick="xsrfPost__________2()"><br>页面一加载设置隐藏域的值==cookie的值 或者前端工程师手动设置，这里模拟设置的动作</a>
+<form method="post" action="/index" id="f1">
+    用户名：<input type="text" name="name" id="name"/><br>
+    密码：<input type="password" name="pwd" id="pwd"/><br>
+    <!-- 如果是同步提交的表单的话可以给隐藏域name属性为_xsrf赋值 -->
+    <input type="hidden" value="" name="_xsrf" id="xsrf"><br>
+    <input type="submit" value="同步POST提交表单"/><br>
+    <input type="button" value="异步POST提交表单" onclick="xsrfPost__________1()"/><br>
+    <input type="button" value="异步POST提交Json数据表单" onclick="xsrfPost()"/><br>
+
+
+    <!--document.cookie.match("\\b_xsrf=([^;]*)\\b"); -->
+</form>
+</body>
+
+<script type="text/javascript">
+    //获取指定Cookie的函数
+    function getCookie(name) {
+        var r = document.cookie.match("\\b" + name + "=([^;]*)\\b");
+        return r ? r[1] : undefined; // 三元表达式
+    }
+    // 直接给隐藏域赋值
+    <!-- 如果是同步提交的表单的话可以给隐藏域name属性为_xsrf赋值 -->
+    function xsrfPost__________2() {
+        var xsrf = getCookie("_xsrf");
+        document.getElementById("xsrf").value = xsrf;
+    }
+    //document.cookie.match("\\b_xsrf=([^;]*)\\b");
+    //["_xsrf=2|e4a08292|d8970f5ab15d49b25fe3dc221148025b|1517847084", "2|e4a08292|d8970f5ab15d49b25fe3dc221148025b|1517847084"]
+
+    function xsrfPost__________1() {
+        // 获取cookie的值 请求体中带_xsrf:xsrf的值即可通过校验
+        var xsrf = getCookie("_xsrf");
+        // 异步提交表单
+        var data = {
+            "_xsrf": xsrf,
+            "name": $('#name').val(),
+            "pwd": $('#pwd').val(),
+        }; // js 中是个对象
+        // 默认情况下转换成_xsrf=...&name=pxd&pwd=123
+        $.post("/index", data, function (data) {
+            alert("OK");
+        });
+
+        // urlencode写法同上
+//        $.post("/index","_xsrf="+xsrf+"&name="+$('#name').val()+"&pwd="+$('#pwd').val()+"",function (data) {
+//            alert("ok")
+//        })
+        // 转换称_xsrf=abc&key1=abc不是json
+    }
+    //AJAX发送post请求，json格式数据,需要在请求头中+ "X-XSRFToken
+
+    //AJAX发送post请求，表单格式数据
+    function xsrfPost() {
+        var xsrf = getCookie("_xsrf");
+        var data = {
+            "name": $('#name').val(),
+            "pwd": $('#pwd').val(),
+        };
+        var json_data = JSON.stringify(data); //json对象转换为 json字符串  '{"name":"pxd","age":18}'
+        $.ajax({
+            url: "/index",
+            method: "POST",
+            contentType: "application/json",
+            headers: {
+                "X-XSRFToken": xsrf,
+            },
+            data: json_data,
+            success: function (data) {
+                alert("OK");
+            }
+        })
+    }
+
+    $(function () {
+        debugger;
+        var pxd = 0
+    });
+</script>
+</html>

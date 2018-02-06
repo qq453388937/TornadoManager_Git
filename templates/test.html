@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<!--关闭了以后直接{{ a }}   autoescape 也是applicaiton的一个参数 全局关闭-->
+{% autoescape None %}
+<!--关了以后手动开一下syiba -->
+{{ escape(a) }}
+<!--<img src="/static/images/home01.jpg">-->
+<!--<img src="{{ static_url('images/home01.jpg') }}">-->
+
+<!--{{  a }}-->
+<!--注意：在Firefox浏览器中会直接弹出alert窗口，
+而在Chrome浏览器中，需要set_header("X-XSS-Protection", 0)-->
+<!--{% raw a %}-->
+
+</body>
+</html>
