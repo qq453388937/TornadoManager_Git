@@ -2,7 +2,7 @@
 import time
 import threading
 
-# yield 关键字的作用挂起函数，并且将函数右面的返回
+# yield 关键字的作用挂起函数，并且将函数右面的返回, 第一次执行到右半边,继续执行的时候返回值往下,停不下来的时候报错
 
 gen_model = None
 
@@ -10,8 +10,11 @@ gen_model = None
 def new_long_io():
     # 接受一个函数作为参数
     
-    
-    """执行完线程的方法调用回调函数"""
+    """def func():"""
+    """执行完线程的方法调用回调函数
+   
+    第一次执行到右半边,继续执行的时候返回值往下,停不下来的时候报错
+    """
     global gen_model
     print("开始耗时操作～～～～～～～～～～～～～")
     time.sleep(5)
@@ -20,7 +23,7 @@ def new_long_io():
     yield result  # 开始不再返回,现在return回去
     """
     try:
-        gen_model.send(result)
+        gen_model.send(result)   # 将保存的现场给新线程去执行
     except StopIteration as e:
         pass
     """
@@ -43,7 +46,7 @@ def gen_decorate(paran_func):
         def fun():
             ret = next(gen_long_io) # next 等号左面是生成器里 return 或者 yield return 出来的东西欧
             try:
-                gen_model.send(ret)
+                gen_model.send(ret) # 将断点保存的现场给新线程去执行,原来是主线程执行了一会
             except StopIteration as e:
                 pass
         th = threading.Thread(target=fun, args=())
@@ -72,7 +75,6 @@ if __name__ == "__main__":
     # 方法里用全局变量需要用global申明,如果是if语句则不需要global申明使用全局变量
     # gen_model = a()  # a函数有yield所以是生成器,不能直接调用
     # next(gen_model)
-    
     a()
     b()
     while True:
