@@ -1,6 +1,8 @@
 # -*- coding:utf-8 -*-
 import time
 import threading
+
+
 #  程序的写法： 回调的方式实现异步！！！！  tornado无非是将线程换成epoll来实现异步
 
 def my_callback(result):
@@ -10,7 +12,7 @@ def my_callback(result):
 
 def new_long_io(param_func=None):
     # 接受一个函数作为参数
-
+    
     def func(callback):
         """执行完线程的方法调用回调函数"""
         print("开始耗时操作～～～～～～～～～～～～～")
@@ -19,7 +21,7 @@ def new_long_io(param_func=None):
         result = "ok！！！！！"
         # return result  # 不再返回
         callback(result)
-
+    
     # th = threading.Thread(target=func)
     # 耗时操作交给别人去处理，这里暂时给一个线程
     th = threading.Thread(target=func, args=(param_func,))
@@ -40,9 +42,9 @@ def a():
     # 执行一个耗时操作
     # ret = old_long_io()
     # print ret
-
-
-    new_long_io(my_callback) # 新的long_io把打印的任务交给了回调函数去执行
+    
+    
+    new_long_io(my_callback)  # 新的long_io把打印的任务交给了回调函数去执行
     print ("离开请求aaa！")
 
 
