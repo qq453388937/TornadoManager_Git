@@ -19,6 +19,7 @@ class IndexHandler(tornado.web.RequestHandler):
 
 
 def main():
+    tornado.options.parse_command_line()
     app = tornado.web.Application([
         (r"/", IndexHandler)
     ], **config.setting)  # 列表嵌套元祖！

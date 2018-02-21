@@ -13,6 +13,7 @@ class IndexHandler(tornado.web.RequestHandler):
 
 def main():
     app = tornado.web.Application([(r"/", IndexHandler)])  # 列表嵌套元祖！
+    # app.listen()这个方法只能在单进程模式中使用。
     app.listen(9999)  # 仅仅是绑定端口不是监听！
     #              类      实例 有返回无创建 类比单例
     tornado.ioloop.IOLoop.current().start()  # 这里监听端口！

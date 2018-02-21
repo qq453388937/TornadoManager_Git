@@ -28,8 +28,10 @@ class IndexHandler(tornado.web.RequestHandler):
 def main():
     # 加载外联文件  命令行不用带参数啦 parse_config_file |  parse_command_line
     # tornado会默认为我们配置标准logging模块，即默认开启了日志功能，并向标准输出（屏幕）打印日志信息。
+    tornado.options.parse_command_line()
     tornado.options.parse_config_file("./config")
     tornado.options.options.logging = None  # 关闭默认的日志
+    # 关闭日志得有这句
     print(tornado.options.options.itcast)
     print(tornado.options.options.port)
     app = tornado.web.Application([(r"/", IndexHandler)])  # 列表嵌套元祖！

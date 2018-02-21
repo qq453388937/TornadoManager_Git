@@ -22,19 +22,19 @@ class IndexHandler(tornado.web.RequestHandler):
 
 
 def main():
-    app = tornado.web.Application([(r"/", IndexHandler)])  # 列表嵌套元祖！
+    app = tornado.web.Application([(r"/", IndexHandler)])  # 列表嵌套元祖！ 路由信息映射元组的列表
     # app.listen(9999)   #  只适用于单进程模式
     # 修改替代上方
     http_server = tornado.httpserver.HTTPServer(app)
     # http_server.listen(9999)   # 仅仅是绑定端口不是监听！
 
     http_server.bind(9999)
-    #  默认开启1个进程,如果设置为 None 或者 0 的话会自动创建和CPU核数相等的进程数,如果>0就是自定义进程数
+    #  默认开启1个进程,如果设置为 None 或者 <=0 的话会自动创建和CPU核数相等的进程数,如果>0就是自定义进程数
     #  官方不建议使用自动开启多进程，而是手动开启多个进程绑定不同端口
-    http_server.start(0)
+    http_server.start(0) # num_process 是命名参数
     #              类      实例 有返回无创建 类比单例  这里监听端口
     tornado.ioloop.IOLoop.current().start()
-
+    # app.listen()这个方法只能在单进程模式中使用。
 
 if __name__ == '__main__':
     main()

@@ -10,7 +10,7 @@ tornado.options.define("port", type=int, default=9999, help="服务器端口")
 
 
 class IndexHandler(tornado.web.RequestHandler):
-    def get(self):  # reverse_url 是RequestHanlder的方法
+    def get(self):  # reverse_url 是RequestHanlder的方法 反向解析
         self.write("<a href='%s'>cpp</a>" % (self.reverse_url("cpp_url")))  # 反向解析为r""内
 
 

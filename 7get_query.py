@@ -39,7 +39,7 @@ class IndexHandler(tornado.web.RequestHandler):
             json_str2 = self.request.body.decode()  # 刚转过来是str字符串，ｊｓｏｎ字符串
             # print(type(json_str2)) # str
             json_str = eval(self.request.body.decode())  # 字符串转字典，转成他应该的类型
-            # json_model = json.load(json_str2) # no xing teacher can
+            # json_model = json.loads(json_str2.decode()) #can
             self.write(json_str)
             # print(type(json_str))
             # print(json_str["name"])

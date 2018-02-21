@@ -21,6 +21,7 @@ setting = {
     'xsrf_cookies': True,  # 组合拳
     'login_url': '/login',  # 登陆验证 用户验证  @tornado.web.authenticated  Requesthandler.get_current_user(self): 重写return true则通过校验！
     # 'autoescape':True
+    # 'autoreload':True
     'debug': True,
 }
 
