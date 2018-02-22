@@ -32,6 +32,7 @@ class IndexHandler(BaseHandler):
         因为get 和 post 只能收到Content-Type 为 form-data | x-www-form-urlencoded 两种类型的请求
         所以想要对发过来为json数据进行一个预处理存起来就可以使用啦！
         # None.startswith会报错，不安全，所以要给Content-Type给一个空字符串的默认值
+        这个方法可以封装到基类可以使所有请求更加健壮
         :return:
         """
         if self.request.headers.get("Content-Type", "").startswith("application/json"):
@@ -74,6 +75,7 @@ class Index2Handler(RequestHandler):
         self.send_error(200)  # 注意此出抛出了错误
 
     def on_finish(self):
+        """通常该方法用来进行资源清理释放或处理日志"""
         print("调用了on_finish()")
 
 
@@ -91,3 +93,15 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+"""
+调用了set_default_headers()
+调用了initialize()
+调用了prepare()
+调用了get|post()
+#============================= 如果调用了send_error() 方法=================
+调用了set_default_headers()  
+调用了write_error() 
+#============================= 如果调用了send_error() 方法=================
+调用了on_finish()
+"""

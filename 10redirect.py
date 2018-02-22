@@ -18,6 +18,7 @@ tornado.options.define("port", type=int, default=9999, help="端口号")
 
 
 class BaseHandler(tornado.web.RequestHandler):
+    """父类Handler可以统一header"""
     def set_default_headers(self):
         # print("执行了detfault `headers")
         self.set_header("Content-Type", "text/html;charset=UTF-8")
@@ -37,6 +38,7 @@ class LoginHandler(BaseHandler):
 
     def post(self):
         self.redirect("/")
+        # self.redirect(self.reverse_url('....'))
 
 
 def main():

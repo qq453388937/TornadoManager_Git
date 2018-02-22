@@ -14,8 +14,10 @@
     <!-- 如果是同步提交的表单的话可以给隐藏域name属性为_xsrf赋值 -->
     <input type="hidden" value="" name="_xsrf" id="xsrf"><br>
     <input type="submit" value="同步POST提交表单"/><br>
+         <!--异步POST提交普通form表单格式的表单到后端 -->
     <input type="button" value="异步POST提交表单" onclick="xsrfPost__________1()"/><br>
-    <input type="button" value="异步POST提交Json数据表单" onclick="xsrfPost()"/><br>
+            <!--异步POST提交Json数据格式的表单到后端 -->
+    <input type="button" value="异步POST提交Json数据格式的表单到后端" onclick="xsrfPost()"/><br>
 
 
     <!--document.cookie.match("\\b_xsrf=([^;]*)\\b"); -->
@@ -28,7 +30,7 @@
         var r = document.cookie.match("\\b" + name + "=([^;]*)\\b");
         return r ? r[1] : undefined; // 三元表达式
     }
-    // 直接给隐藏域赋值
+    // submit按钮同步提交表单方案其一可以直接给隐藏域name=_xsrf赋值为cookie的值
     <!-- 如果是同步提交的表单的话可以给隐藏域name属性为_xsrf赋值 -->
     function xsrfPost__________2() {
         var xsrf = getCookie("_xsrf");
@@ -37,6 +39,7 @@
     //document.cookie.match("\\b_xsrf=([^;]*)\\b");
     //["_xsrf=2|e4a08292|d8970f5ab15d49b25fe3dc221148025b|1517847084", "2|e4a08292|d8970f5ab15d49b25fe3dc221148025b|1517847084"]
 
+    //普通form表单只需要表单中带上 _xsrf = cookie的值即可通过校验 AJAX发送post请求，表单格式数据
     function xsrfPost__________1() {
         // 获取cookie的值 请求体中带_xsrf:xsrf的值即可通过校验
         var xsrf = getCookie("_xsrf");
@@ -51,15 +54,16 @@
             alert("OK");
         });
 
-        // urlencode写法同上
-//        $.post("/index","_xsrf="+xsrf+"&name="+$('#name').val()+"&pwd="+$('#pwd').val()+"",function (data) {
-//            alert("ok")
-//        })
+        // urlencode写法同上,另一种更为直接的写法
+        $.post("/index","_xsrf="+xsrf+"&name="+$('#name').val()+"&pwd="+$('#pwd').val()+"",function (data) {
+           alert("ok")
+       })
         // 转换称_xsrf=abc&key1=abc不是json
     }
-    //AJAX发送post请求，json格式数据,需要在请求头中+ "X-XSRFToken
-
-    //AJAX发送post请求，表单格式数据
+    //AJAX发送post请求，
+    // json格式数据,需要在请求头中+ 键"X-XSRFToken
+    // 并且值为cookie的值 并且 contentType: "application/json",
+    // 并且发过去的是json字符串
     function xsrfPost() {
         var xsrf = getCookie("_xsrf");
         var data = {

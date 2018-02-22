@@ -64,7 +64,11 @@ execute_rowcount(query, *parameters, **kwparameters) 返回影响的行数
 
 class SqlHandler(BaseHandler):
     def get(self, num):
-        """ ' or 1=1 or '   sql注入"""
+        """ ' or 1=1 or '   sql注入
+        db.execute("insert into houses(title, position, price, score, comments) values(%s, %s, %s, %s, %s)", "独立装修小别墅", "紧邻文津街", 280, 5, 128)
+或
+db.execute("insert into houses(title, position, price, score, comments) values(%(title)s, %(position)s, %(price)s, %(score)s, %(comments)s)", title="独立装修小别墅", position="紧邻文津街", price=280, score=5, comments=128)
+        """
         if num == "1":
             sql = "select COUNT(*) as mycount from bookinfo where btitle = %s and bread = %s;"
             # ret = self.application.db.get(sql, "哈哈", 0)
@@ -81,7 +85,7 @@ class SqlHandler(BaseHandler):
                 "btitle": "哈哈",
                 "bread": 0
             }
-            kwargs = dict(  # 这种写法键不用写引号！
+            kwargs = dict(  # 这种写法键不用写引号！仅此而已
                 btitle="哈哈",
                 bread=0
             )
@@ -138,6 +142,7 @@ class SqlHandler(BaseHandler):
         try:
             ret = self.application.db.execute(sql, path)
         except Exception as e:
+            """return 很关键!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"""
             return self.write("DB error:%s" % e)  # 不return就要将下面的放入else
         self.write("返回插入的ＩＤ%d" % ret)
 

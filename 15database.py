@@ -38,7 +38,7 @@ class MyApplication(tornado.web.Application):
             (r"/", IndexHandler),
         ]
         # super(子类,self)
-        super(MyApplication, self).__init__(handlers, **kwargs)  # 接受过来的参数传给父类
+        super(MyApplication, self).__init__(handlers, **kwargs)  # 接受过来的参数传给父类,但是hanlers路由映射是子类穿过去的
         self.db = torndb.Connection(
             host="127.0.0.1",
             database="test1",
@@ -53,6 +53,7 @@ class IndexHandler(BaseHandler):
 execute(query, *parameters, **kwparameters) 返回影响的最后一条自增字段值
 execute_rowcount(query, *parameters, **kwparameters) 返回影响的行数
          """
+        # 因为基类中RequestHandler的__init__方法封装了属性application为Application的实例对象
         ret = self.application.db.get("select btitle from bookinfo where id = 7;")
         # ret = MyApplication().db.get("select btitle from bookinfo where id = 2;") 相当于这句话
         print ret  # 字典对象{'btitle': u'\u5929\u9f99\u516b\u90e8'}
@@ -67,8 +68,8 @@ def main():
     # app = MyApplication([
     #     (r"/", IndexHandler),
     # ], **config.setting)
-
-    app = MyApplication(**config.setting) # 路由抽取到基类，配置文件单独一个文件
+    # 路由映射抽取导MyApplication中
+    app = MyApplication(**config.setting)  # 路由抽取到基类，配置文件单独一个文件
     # 最简版本抽取到基类自己的Application
     # app.db = torndb.Connection(
     #     host="127.0.0.1",

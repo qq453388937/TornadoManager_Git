@@ -9,8 +9,8 @@ import json
 import config
 import os
 import torndb  # 如果有问题安装 pip install mysqlclient 可解决MYSQLDB问题
-from tornado.httpclient import AsyncHTTPClient
-import tornado.gen
+from tornado.httpclient import AsyncHTTPClient  # 导入tornado异步客户端
+import tornado.gen # 异步方法的装饰器
 
 # import tornado.httpclient
 
@@ -21,7 +21,7 @@ class BaseHandler(tornado.web.RequestHandler):
     def set_default_headers(self):
         # print("执行了detfault `headers")
         self.set_header("Content-Type", "text/html;charset=UTF-8")
-    
+
     def prepare(self):
         """
         json.loads:JSON str转成dict(python叫字典 javascript叫做对象！！！)
@@ -39,13 +39,14 @@ class MyApplication(tornado.web.Application):
         # 路由抽取到基类
         # 这个文件的所在文件夹的绝对路径 == > /home/python/Desktop/TornadoManager/
         current_path = os.path.dirname(__file__)
-        
+
         handlers = [
             (r"/", IndexHandler),  # SafeCookie
             (r"/index", IndexHandler),
             (r"/index2", IndexYieldHandler),
             (r"/index3", BingFaAsyncHandler),
             (r"/other", OtherHandler),
+            (r"/localhost", LocalhostHandler),
             # OtherHandler  IndexYieldHandler
             # 不用模板语言，直接使用静态文件
             # 这玩意是用来自定义静态资源请求路径的，光靠配置文件的只能/static/html/index.html  ,可以定义多个重复的
@@ -75,24 +76,39 @@ class MyStaticFileHandler(tornado.web.StaticFileHandler):
         # self.set_secure_cookie("itcast2", "oa2")
 
 
+class LocalhostHandler(BaseHandler):
+    def get(self):
+        self.write("有人异步请求了我!nice!!!!")
+
+
 class IndexHandler(BaseHandler):
+
     def post(self):
         self.write("index post ok！")
-    
+
     @tornado.web.asynchronous  # 不关闭链接 也不发送响应, 变为异步方法,回调手动过关闭
     def get(self):
+        """
+        回调的方式
+        异步不是加快自己的响应速度而是方便了别人,雷锋精神,
+        别人在发起请求的时候不会因为我的耗时的请求而无法响应,提高了冰法处理的能力
+        """
         # 配置过模板路径只需要填写相对路径即可
         # 192.168.247.128
         #  实例化异步客户端
         async_client = AsyncHTTPClient()
         remote_url = "http://int.dpool.sina.com.cn/iplookup/iplookup.php?format=json&ip=14.130.112.24"
-        async_client.fetch(remote_url, callback=self.callback_func)
-    
-    def callback_func(self, response):
+
+        # async_client.fetch(remote_url, callback=self.callback_func)
+        remote_url = "http://127.0.0.1:9999/localhost"
+        async_client.fetch(remote_url, callback=self.on_response)  # 对象方法第一个参数self
+
+    def on_response(self, response):  # self 就是 RequestHandler对象传过来,self.write()
         """回调函数"""
         body = response.body
         json_data = json.loads(body)
         self.write(json_data["city"])
+        self.write('ok')
         self.finish()  # 回调手动关闭 只适用于回调方法方式
 
 
@@ -106,20 +122,30 @@ class IndexYieldHandler(BaseHandler):
     #     json_data = json.loads(body)
     #     self.write(json_data["city"])
     #     self.finish()
-    
+
     @tornado.gen.coroutine
     def get(self):
         # 一个等一个,排队等 双重等待
         time.sleep(10)
-        json_data = yield self.get_ip_city()
+        # async_client = AsyncHTTPClient()
+        # remote_url = "http://int.dpool.sina.com.cn/iplookup/iplookup.php?format=json&ip=14.130.112.24"
+        # response = yield async_client.fetch(remote_url)
+        # body = response.body
+        # json_data = json.loads(body)
+        # # return json_data # python3 可用 python2错误!
+        # raise tornado.gen.Return(json_data)
+
+        json_data = yield self.get_ip_city()  # 对上面的小小封装了一下下
         self.write(json_data.get("city"))
         # self.finish() # # 回调手动关闭 只适用于回调方法方式
-    
-    @tornado.gen.coroutine
+    """协程异步"""
+    import tornado.gen  # 装饰器用到的导入
+
+    @tornado.gen.coroutine # 对上面的小小封装了一下下 也需要加该装饰器
     def get_ip_city(self):
         async_client = AsyncHTTPClient()
         remote_url = "http://int.dpool.sina.com.cn/iplookup/iplookup.php?format=json&ip=14.130.112.24"
-        
+
         response = yield async_client.fetch(remote_url)  # 没有回调,同步的写法写异步
         body = response.body
         json_data = json.loads(body)
@@ -142,12 +168,12 @@ class BingFaAsyncHandler(BaseHandler):
         rep1, rep2 = yield [self.get_ip_city(ips[0]), self.get_ip_city(ips[1])]  # 返回自己jiebao
         # 再次执行完2个唤醒2个,2个2个异步请求,并行携程
         rep3_and_rep4 = yield {"rep3": self.get_ip_city(ips[2]), "rep4": self.get_ip_city(ips[3])}
-        
+
         self.write_response(ips[0], rep1)
         self.write_response(ips[1], rep2)
         self.write_response(ips[2], rep3_and_rep4['rep3'])
         self.write_response(ips[3], rep3_and_rep4['rep4'])
-    
+
     @tornado.gen.coroutine
     def get_ip_city(self, ip):
         async_client = AsyncHTTPClient()
@@ -160,7 +186,7 @@ class BingFaAsyncHandler(BaseHandler):
             json_data = json.loads(body)
         # return json_data # python3 可用 python2错误!
         raise tornado.gen.Return(json_data)  # 自定义异常抛出,json_data传进去,唤醒get方法继续执行
-    
+
     def write_response(self, ip, response):
         self.write(ip)
         self.write(":<br/>")

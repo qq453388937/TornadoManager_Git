@@ -27,7 +27,7 @@ class BaseHandler(tornado.web.RequestHandler):
 
     def write_error(self, status_code, **kwargs):
         """# send_error(404,content="") 会调用该方法  默认传ｃｏｎｔｅｎｔ是没有意义的
-        send_error() 会出发finish() 之后就不能在self.write() 了
+        send_error() 会触发finish() 之后就不能在self.write() 了
         """
         self.set_header("Content-Type", "text/html;charset=UTF-8")
         self.write("出错啦!")
@@ -58,14 +58,14 @@ class IndexHandler(BaseHandler):
         print(type(a))  # python2 拿到的是unicode类型，需要在拼接的时候将拼接字符串转换为u""
         b = self.get_argument("b")
         print(type(b))  # python2 拿到的是unicode类型,需要在拼接的时候讲拼接字符串转化为u“”
-
+        # send_error 会触发write_error 方法,如果重写了的话
         self.send_error(int(s), title="哈哈哈", content="嘿嘿嘿")  # 类似 ｒａｉｓｅ
         # my_dict = {
         #     "title": "行业人称666",
         #     "content": "专业人称999"
         # }
         # #  自动解包
-        # self.send_error(200, **my_dict)  # 类似 ｒａｉｓｅ
+        # self.send_error(200, **my_dict)  # 自动解包
         # self.write("666")
 
     def write_error(self, status_code, **kwargs):

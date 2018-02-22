@@ -91,9 +91,15 @@ class Index2Handler(BaseHandler):
                 "comments": 6,
                 "position": "北京市丰台区六里桥地铁"
             }]
-        my_data = {"data": houses}
+        # 如果是简单的只有一层关系没有嵌套关系的话直接data=house最简单
+        # 否则就得拼接为字典用一个变量接受他,{}|dict()然后使用**解包
+        # my_data = {"data": houses}
+        # my_data = dict(data=houses)
         # dict(a=1,b=2)
-        self.render("indexMore.html", **my_data)
+        # self.render("indexMore.html", **mydata)
+        self.render("indexMore.html", **dict(data=houses))
+
+        # self.render('indexMore.html', data=houses)
 
 
 def main():

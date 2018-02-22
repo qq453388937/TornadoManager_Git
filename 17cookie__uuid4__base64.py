@@ -67,7 +67,7 @@ class MyStaticFileHandler(tornado.web.StaticFileHandler):
         前段匹配 document.cookie.match("\\b_xsrf=([^;]*)\\b");
         """
         super(MyStaticFileHandler, self).__init__(*args, **kwargs)
-        self.xsrf_token  # 植入cookie 利用浏览器的同源策略
+        self.xsrf_token  # 所有静态文件植入xsrf的cookie 利用浏览器的同源策略
         self.set_secure_cookie("itcast", "oa")
         self.set_secure_cookie("itcast2", "oa2")
 
@@ -81,17 +81,21 @@ class IndexHandler(BaseHandler):
     """
 
     def post(self):
+        """
+
         # pxd_safe="2|1:0|10:1517778127|8:pxd_safe|4:Mg==|c882239d36990732c44df62f6392341550bddb11c9bed20b69fd5eae319e7200"
         #  表单中使用 {% module xsrf_form_html() %}
+        :return:
+        """
 
         # 不是表单的话
 
         # name = self.get_argument("name", "没传过来")
         # pwd = self.get_argument("pwd", "没传过来")
-        # _xsrf = self.get_argument("_xsrf", "没传过来")
+        _xsrf = self.get_argument("_xsrf", "没传过来")
         # print("name:" + name)
         # print("pwd:" + pwd)
-        # print("_xsrf:" + _xsrf)  # 隐藏域的值
+        print("_xsrf:" + _xsrf)  # 隐藏域的值
         # print(self.request.body)
         # print(self.request.headers)
 
@@ -104,8 +108,6 @@ class IndexHandler(BaseHandler):
     def get(self):
         # 配置过模板路径只需要填写相对路径即可
         self.render("booktest/formpost.html")
-
-
 
 
 class CookieTest(BaseHandler):
@@ -121,7 +123,8 @@ class CookieTest(BaseHandler):
 
     def get(self):
         # Set-Cookie:pxd="\350\241\214\344\270\232\344\272\272\347\247\260666"; Path=/
-        # self.set_header("Set-Cookie","pxd='\350\241\214\344\270\232\344\272\272\347\247\260666'; Path=/")
+        # 手动通过set_header的方式设置cookie
+        self.set_header("Set-Cookie", "pxd='\350\241\214\344\270\232\344\272\272\347\247\260666'; Path=/")
         # self.set_cookie("pxd", "行业人称666") # 浏览会话结束时消失
         import time
         import datetime
@@ -147,16 +150,15 @@ class CookieTest(BaseHandler):
 
 
 class SafeCookie(BaseHandler):
-    # import base64
-    # import uuid
-    # uuid.uuid4().bytes  # bytes属性将此uuid码作为16字节字符串。
+    import base64
+    import uuid
+    uuid.uuid4().bytes  # bytes属性将此uuid码作为16字节字符串。
 
-    # uuid.uuid4().get_hex() # 随机 '06eb32835d894d919c86d9405ed4f5eb' 16进制表示形式
-    # str(uuid.uuid4())  '6b0348bb-9d6c-473e-ba88-cf72b6cffaff'  guid
+    uuid.uuid4().get_hex()  # 随机 '06eb32835d894d919c86d9405ed4f5eb' 16进制表示形式
+    str(uuid.uuid4())  # '6b0348bb-9d6c-473e-ba88-cf72b6cffaff'  guid
     # 随机混淆
-    # base64.b64encode(uuid.uuid4().bytes + uuid.uuid4().bytes)   # '5wmFAdNoS16eKE3DffS0ZtV9ogd6kUwRhv4/hzj8gzg='
-
-
+    base64.b64encode(uuid.uuid4().bytes + uuid.uuid4().bytes)  # '5wmFAdNoS16eKE3DffS0ZtV9ogd6kUwRhv4/hzj8gzg='
+    base64.b64decode('base64解码方法')
 
     def post(self):
         """
@@ -169,9 +171,9 @@ class SafeCookie(BaseHandler):
         :return:
         """
         cookie_value = self.get_secure_cookie("pxd_safe")
-        value = int(cookie_value) + 1 if cookie_value else 1
-        self.set_secure_cookie("pxd_safe", str(value))  # exin 字符串必须
-        self.write(str(value))  # exin 字符串必须
+        value = int(cookie_value) + 1 if cookie_value else 1  # python 三元表达式
+        self.set_secure_cookie("pxd_safe", str(value))  # cookie:value 字符串必须
+        self.write(str(value))  # value 字符串必须
 
 
 def main():

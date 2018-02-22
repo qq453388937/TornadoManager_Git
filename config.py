@@ -7,6 +7,12 @@ redis_options = {
     'redis_pass': '',
 
 }
+"""
+另一个好处是你可以改变你应用URL的结构，而不需要改变模板中的代码。
+例如，可以通过设置static_url_prefix来更改Tornado的默认静态路径前缀/static。
+如果使用static_url而不是硬编码的话，代码不需要改变。
+
+"""
 # 这些个键是固定的参数
 setting = {
     'template_path': os.path.join(os.path.dirname(__file__), 'templates'),  # 设置模板路径，如果用到模板和django一样的话
@@ -18,8 +24,9 @@ setting = {
     'static_path': os.path.join(os.path.dirname(__file__), 'statics'),
     # 'static_url_prefix': "/ChinaNumber1", # 一般默认用/static ,这个参数可以修改默认的静态请求开头路径
     'cookie_secret': '0Q1AKOKTQHqaa+N80XhYW7KCGskOUE2snCW06UIxXgI=',  # 组合拳
-    'xsrf_cookies': True,  # 组合拳
-    'login_url': '/login',  # 登陆验证 用户验证  @tornado.web.authenticated  Requesthandler.get_current_user(self): 重写return true则通过校验！
+    #'xsrf_cookies': True,  # 组合拳
+    # 校验不通过也就是一般来说的登陆失败后跳转的页面地址
+    'login_url': '/login',  # 登陆验证 用户验证  @tornado.web.authenticated 重写 Requesthandler.get_current_user(self): return true则通过校验！
     # 'autoescape':True
     # 'autoreload':True
     'debug': True,

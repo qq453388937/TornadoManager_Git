@@ -27,7 +27,7 @@ class IndexHandler(tornado.web.RequestHandler):
 
         if file_model:  # 有文件,根据表单name键能获取到值
             print(file_model[0].get("filename"))  # 虽然可以点出来但是python 字典只能用[""] | get()
-            print(file_model[0].get("content_type"))
+            print(file_model[0].get("content_type")) # 获取文件类型
 
             file_data = file_model[0]["body"]
             with open("upload/3.png", "w+") as f:
