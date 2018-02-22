@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>聊天室</title>
+    <script src="{{ static_url('js/jquery.min.js') }}"></script>
+
+</head>
+<body>
+aaaaa
+<div id="contents" style="height:300px;overflow:auto;"></div>
+
+<div>
+    测试
+    <textarea id="msg"></textarea>
+    <a href="javascript:void(0);" onclick="sendMsg()" id="aa">发送</a>
+</div>
+</body>
+</html>
+
+<script>
+    $(function () {
+        // 建立websocket 链接 http://192.168.247.128:1111/
+        var ws = new WebSocket("ws://192.168.247.128:1111/websocket");
+        ws.onopen = function () {   // 连接建立好后的回调
+            ws.send("hello world")      // 向建立的连接发送消息
+
+        };
+        ws.onmessage = function (ev) { // 收到服务器发送的消息后执行的回调
+            console.log(ev.data); // 接收的消息内容在事件参数evt的data属性中
+            $('#contents').append("<p>" + ev.data + "</p>");
+
+        };
+        /*
+        function sendMsg() {
+            var value = $('#msg').val();
+            if (value) {
+                ws.send(value);
+                $('#msg').val('');
+            }
+
+        } // 这个放在$(function(){中}) 是错误的,要么不要$(function) 要么定义click事件
+        */
+        $('#aa').click(function () {
+            var value = $('#msg').val();
+            if (value) {
+                ws.send(value);
+                $('#msg').val('');
+            }
+        });
+
+    });
+
+
+</script>
