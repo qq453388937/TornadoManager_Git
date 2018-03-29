@@ -20,7 +20,7 @@ tornado.options.define("port", type=int, default=9999, help="端口号")
 class BaseHandler(tornado.web.RequestHandler):
     def set_default_headers(self):
         # print("执行了detfault `headers")
-        self.set_header("Content-Type", "text/json;charset=UTF-8")
+        self.set_header("Content-Type", "text/json;charset=utf-8;")
         self.set_header("Itcast", "pxd")
 
         # 自定义位置参数，自定义多个命名参数放到kwargs的字典里

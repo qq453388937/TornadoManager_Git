@@ -9,7 +9,6 @@ import config  # 新导入的自定义的py文件
 tornado.options.define("port", default=8001, type=int, help="给他一个端口")
 tornado.options.define("itcast", default=[1], type=str, help="无意义测试多值情况", multiple=True)
 
-
 class IndexHandler(tornado.web.RequestHandler):
     """主页处理函数"""
 
